@@ -96,4 +96,35 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
-# TurboTrack-Engine
+
+# 🧠 TurboTrack Backend
+
+Welcome to the **backend engine** of **TurboTrack** – a powerful and customizable load testing platform built for developers and teams who care about performance.
+
+This service is responsible for executing load tests, managing job queues, storing results, and exposing APIs to the frontend app.
+
+---
+
+## 🚀 Tech Stack
+
+- **NestJS** – Scalable and modular backend framework
+- **Custom Load Test Engine** – No external tools like Autocannon or k6
+- **Redis + BullMQ** – Job queue system (for concurrency and scaling)
+- **PostgreSQL** – Database for storing test definitions and results
+- **Prisma** or **TypeORM** – ORM layer (based on your preference)
+
+---
+
+## 📦 Features
+
+- Create and manage HTTP load tests
+- Simulate high concurrency using async workers
+- Measure:
+  - Request throughput
+  - Latency (avg, p95, p99)
+  - HTTP status code distribution
+  - Error rates
+- Queue-based job system (to avoid overload)
+- API integration with the TurboTrack frontend
+
+
