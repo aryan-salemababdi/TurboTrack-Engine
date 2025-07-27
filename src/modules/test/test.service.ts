@@ -1,16 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { performance } from 'perf_hooks';
-import fetch from 'node-fetch';
 import { RunTestType } from 'src/common/types/runTest.type';
 
 @Injectable()
 export class TestService {
-  async runTest({
-    url,
-    requests,
-    concurrency,
-    method = 'GET',
-  }: RunTestType) {
+  async runTest({ url, requests, concurrency, method = 'GET' }: RunTestType) {
     let success = 0;
     let failed = 0;
     const latencies: number[] = [];
