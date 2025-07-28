@@ -4,6 +4,7 @@ import { RunTestType } from 'src/common/types/runTest.type';
 
 @Injectable()
 export class TestService {
+
   async runBatchTest({
     url,
     requests,
@@ -115,4 +116,5 @@ export class TestService {
 
     return runWithConcurrency();
   }
+  
 }
