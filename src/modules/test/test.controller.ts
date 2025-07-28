@@ -8,12 +8,12 @@ export class TestController {
 
   @Post('run-test')
   async runTest(
-    @Body() body: { testType: 'batch' | 'sustained'; params: RunTestType },
+    @Body() body: RunTestType & { testType: 'batch' | 'sustained' },
   ) {
     if (body.testType === 'batch') {
-      return this.testService.runBatchTest(body.params);
+      return this.testService.runBatchTest(body);
     } else {
-      return this.testService.runSustainedTest(body.params);
+      return this.testService.runSustainedTest(body);
     }
   }
 }
