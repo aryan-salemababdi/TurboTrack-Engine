@@ -4,12 +4,6 @@ import { RunTestType } from 'src/common/types/runTest.type';
 
 @Injectable()
 export class TestService {
-  /**
-   * این متد درخواست‌ها را به صورت "دسته‌ای" (Batch) ارسال می‌کند.
-   * یعنی به اندازه `concurrency` درخواست همزمان می‌فرستد و منتظر می‌ماند تا همه تمام شوند،
-   * سپس دسته بعدی را ارسال می‌کند.
-   * نسخه بهینه شده، مشکل مصرف بالای حافظه را حل کرده است.
-   */
   async runBatchTest({
     url,
     requests,
@@ -36,8 +30,6 @@ export class TestService {
 
     const startTime = performance.now();
     let requestsMade = 0;
-
-    // به جای ساختن یک آرایه غول‌پیکر، درخواست‌ها را در حلقه‌های دسته‌ای ایجاد می‌کنیم
     while (requestsMade < requests) {
       const batchSize = Math.min(concurrency, requests - requestsMade);
       const promiseBatch: Promise<void>[] = [];
@@ -56,7 +48,7 @@ export class TestService {
       latencies.reduce((sum, l) => sum + l, 0) / latencies.length || 0;
 
     return {
-      totalRequests: requestsMade, // از تعداد واقعی ارسال شده استفاده می‌کنیم
+      totalRequests: requestsMade,
       success,
       failed,
       avgLatency: Number(avgLatency.toFixed(2)),
@@ -64,12 +56,6 @@ export class TestService {
       durationMs: Number(durationMs.toFixed(2)),
     };
   }
-
-  /**
-   * این متد بار "پایدار" (Sustained) ایجاد می‌کند.
-   * یعنی به تعداد `concurrency` کاربر همزمان، به طور مداوم درخواست ارسال می‌کنند تا به کل `requests` برسند.
-   * نسخه بهینه شده، باگ شمارش درخواست (Race Condition) را حل کرده است.
-   */
   async runSustainedTest({
     url,
     requests,
@@ -96,14 +82,12 @@ export class TestService {
 
     const startTime = performance.now();
 
-    // worker تعریف می‌کنیم که تعداد مشخصی درخواست را اجرا کند
     const worker = async (requestsToRun: number) => {
       for (let i = 0; i < requestsToRun; i++) {
         await doRequest();
       }
     };
 
-    // برای جلوگیری از Race Condition، تعداد کل درخواست‌ها را بین workerها تقسیم می‌کنیم
     const workerPool: Promise<void>[] = [];
     const activeConcurrency = Math.min(concurrency, requests);
     const requestsPerWorker = Math.floor(requests / activeConcurrency);
