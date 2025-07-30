@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { performance } from 'perf_hooks';
-import { RunTestType } from 'src/common/types/runTest.type';
+import { RunTestType } from '../../common/types/runTest.type';
+
 
 @Injectable()
-export class TestService {
+export class TestProcessorService {
+
   async runBatchTest({
     url,
     requests,
@@ -56,6 +58,7 @@ export class TestService {
       durationMs: Number(durationMs.toFixed(2)),
     };
   }
+  
   async runSustainedTest({
     url,
     requests,
@@ -120,4 +123,5 @@ export class TestService {
       durationMs: Number(durationMs.toFixed(2)),
     };
   }
+  
 }
