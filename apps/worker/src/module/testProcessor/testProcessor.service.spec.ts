@@ -1,13 +1,15 @@
-import { TestService } from './test.service';
-import { RunTestType } from 'src/common/types/runTest.type';
+import { RunTestType } from 'apps/worker/src/common/types/runTest.type';
+import { TestProcessorService } from './testProcessor.service';
+
+
 
 global.fetch = jest.fn();
 
 describe('TestService', () => {
-  let service: TestService;
+  let service: TestProcessorService;
 
   beforeEach(() => {
-    service = new TestService();
+    service = new TestProcessorService();
     jest.clearAllMocks();
   });
 
@@ -22,7 +24,7 @@ describe('TestService', () => {
       method: 'GET',
     };
 
-    const result = await service.runTest(input);
+    const result = await service.runBatchTest(input);
 
     expect(fetch).toHaveBeenCalledTimes(10);
     expect(result.totalRequests).toBe(10);
@@ -51,7 +53,7 @@ describe('TestService', () => {
       method: 'GET',
     };
 
-    const result = await service.runTest(input);
+    const result = await service.runBatchTest(input);
 
     expect(result.success).toBe(5);
     expect(result.failed).toBe(5);
@@ -66,7 +68,7 @@ describe('TestService', () => {
       method: 'GET',
     };
 
-    const result = await service.runTest(input);
+    const result = await service.runBatchTest(input);
 
     expect(result.success).toBe(0);
     expect(result.failed).toBe(5);
