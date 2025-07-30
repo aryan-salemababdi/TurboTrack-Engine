@@ -15,8 +15,20 @@ const pkg = {
     start: 'node main.js'
   },
   dependencies: {
-    "@nestjs/core": "^10.0.0",
-    "@nestjs/common": "^10.0.0",
+    "@nestjs/bull": "^11.0.3",
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
+    "@nestjs/core": "^11.0.1",
+    "@nestjs/mapped-types": "*",
+    "@nestjs/platform-express": "^11.0.1",
+    "axios": "^1.11.0",
+    "bull": "^4.16.5",
+    "chalk": "^5.4.1",
+    "ioredis": "^5.6.1",
+    "node-fetch": "^2.7.0",
+    "p-queue": "^8.1.0",
+    "performance-now": "^2.1.0",
+    "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   }
 };
