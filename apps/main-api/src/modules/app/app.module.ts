@@ -41,7 +41,7 @@ import { AppService } from './app.service';
     },
   ],
 })
-export class AppiModule implements NestModule {
+export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(ResourceMonitorMiddleware).forRoutes('*');
   }
