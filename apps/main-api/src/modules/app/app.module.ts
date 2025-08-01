@@ -5,6 +5,7 @@ import { Redis } from 'ioredis';
 import { ResourceMonitorMiddleware } from '@app/shared';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { EventsGateway } from '../events/events.gateway';
 
 
 @Module({
@@ -28,6 +29,7 @@ import { AppService } from './app.service';
   controllers: [AppController],
   providers: [
     AppService,
+    EventsGateway,
     {
       provide: 'REDIS_CLIENT',
       inject: [ConfigService],

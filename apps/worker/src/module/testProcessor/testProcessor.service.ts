@@ -1,20 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { performance } from 'perf_hooks';
+import { Job } from 'bull';
+import { Redis } from 'ioredis';
 import { RunTestType } from '../../common/types/runTest.type';
 
 
 @Injectable()
 export class TestProcessorService {
 
-  async runBatchTest({
-    url,
-    requests,
-    concurrency,
-    method = 'GET',
-  }: RunTestType) {
+  async runBatchTest(
+    data: RunTestType,
+    job: Job,
+    redisClient: Redis,
+  ) {
+    const { url, requests, concurrency, method = 'GET' } = data;
     let success = 0;
     let failed = 0;
     const latencies: number[] = [];
+    const progressChannel = `progress:${job.id}`;
 
     const doRequest = async () => {
       const start = performance.now();
@@ -35,19 +38,19 @@ export class TestProcessorService {
     while (requestsMade < requests) {
       const batchSize = Math.min(concurrency, requests - requestsMade);
       const promiseBatch: Promise<void>[] = [];
-
       for (let i = 0; i < batchSize; i++) {
         promiseBatch.push(doRequest());
       }
-
       await Promise.all(promiseBatch);
       requestsMade += batchSize;
+
+      const progress = { requestsMade, success, failed, totalRequests: requests };
+      await redisClient.publish(progressChannel, JSON.stringify(progress));
     }
 
     const endTime = performance.now();
     const durationMs = endTime - startTime;
-    const avgLatency =
-      latencies.reduce((sum, l) => sum + l, 0) / latencies.length || 0;
+    const avgLatency = latencies.reduce((sum, l) => sum + l, 0) / latencies.length || 0;
 
     return {
       totalRequests: requestsMade,
@@ -58,18 +61,21 @@ export class TestProcessorService {
       durationMs: Number(durationMs.toFixed(2)),
     };
   }
-  
-  async runSustainedTest({
-    url,
-    requests,
-    concurrency,
-    method = 'GET',
-  }: RunTestType) {
+
+  async runSustainedTest(
+    data: RunTestType,
+    job: Job,
+    redisClient: Redis,
+  ) {
+    const { url, requests, concurrency, method = 'GET' } = data;
     let success = 0;
     let failed = 0;
     const latencies: number[] = [];
+    let requestsMade = 0;
+    const progressChannel = `progress:${job.id}`;
 
     const doRequest = async () => {
+      requestsMade++;
       const start = performance.now();
       try {
         const res = await fetch(url, { method });
@@ -80,11 +86,15 @@ export class TestProcessorService {
       } finally {
         const end = performance.now();
         latencies.push(end - start);
+
+        if (requestsMade % 10 === 0 || requestsMade === requests) {
+          const progress = { requestsMade, success, failed, totalRequests: requests };
+          await redisClient.publish(progressChannel, JSON.stringify(progress));
+        }
       }
     };
 
     const startTime = performance.now();
-
     const worker = async (requestsToRun: number) => {
       for (let i = 0; i < requestsToRun; i++) {
         await doRequest();
@@ -108,11 +118,9 @@ export class TestProcessorService {
     }
 
     await Promise.all(workerPool);
-
     const endTime = performance.now();
     const durationMs = endTime - startTime;
-    const avgLatency =
-      latencies.reduce((sum, l) => sum + l, 0) / latencies.length || 0;
+    const avgLatency = latencies.reduce((sum, l) => sum + l, 0) / latencies.length || 0;
 
     return {
       totalRequests: requests,
@@ -123,5 +131,5 @@ export class TestProcessorService {
       durationMs: Number(durationMs.toFixed(2)),
     };
   }
-  
+
 }

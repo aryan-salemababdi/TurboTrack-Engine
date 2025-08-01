@@ -40,4 +40,5 @@ import { TestProcessorService } from '../testProcessor/testProcessor.service';
     },
   ],
 })
+
 export class WorkerModule {}

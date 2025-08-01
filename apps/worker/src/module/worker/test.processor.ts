@@ -2,15 +2,8 @@ import { Processor, Process } from '@nestjs/bull';
 import { Job } from 'bull';
 import { Inject } from '@nestjs/common';
 import { Redis } from 'ioredis';
+import { RunTestDto } from '@app/shared';
 import { TestProcessorService } from '../testProcessor/testProcessor.service';
-
-interface RunTestJob {
-  url: string;
-  requests: number;
-  concurrency: number;
-  method: 'GET' | 'POST';
-  testType: 'batch' | 'sustained';
-}
 
 @Processor('test-queue')
 export class TestProcessor {
@@ -20,16 +13,22 @@ export class TestProcessor {
   ) {}
 
   @Process('run-single-test')
-  async handleRunTest(job: Job<RunTestJob>) {
+  async handleRunTest(job: Job<RunTestDto>) {
     console.log(`Processing job ${job.id} with type: ${job.data.testType}`);
 
     let result;
-    const testData = job.data;
-
-    if (testData.testType === 'batch') {
-      result = await this.testService.runBatchTest(testData);
+    if (job.data.testType === 'batch') {
+      result = await this.testService.runBatchTest(
+        job.data,
+        job,
+        this.redisClient,
+      );
     } else {
-      result = await this.testService.runSustainedTest(testData);
+      result = await this.testService.runSustainedTest(
+        job.data,
+        job,
+        this.redisClient,
+      );
     }
 
     console.log(`Job ${job.id} completed.`);
