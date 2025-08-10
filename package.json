@@ -1,6 +1,6 @@
 {
   "name": "turbotrack-engine",
-  "version": "2.0.1",
+  "version": "2.3.0",
   "description": "",
   "author": "",
   "private": true,
@@ -19,8 +19,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/turbotrack-engine/test/jest-e2e.json",
-    "build:main-api": "nest build main-api && node build-helper/build-helper.js main-api",
-    "build:worker": "nest build worker && node build-helper/build-helper.js worker"
+    "build:main-api": "nest build main-api && node builder/builder.js main-api",
+    "build:worker": "nest build worker && node builder/builder.js worker"
   },
   "dependencies": {
     "@nestjs/bull": "^11.0.3",
@@ -29,6 +29,8 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/platform-socket.io": "^11.1.5",
+    "@nestjs/websockets": "^11.1.5",
     "axios": "^1.11.0",
     "bull": "^4.16.5",
     "chalk": "^5.4.1",
@@ -37,7 +39,8 @@
     "p-queue": "^8.1.0",
     "performance-now": "^2.1.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
