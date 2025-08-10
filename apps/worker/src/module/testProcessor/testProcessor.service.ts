@@ -2,18 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { performance } from 'perf_hooks';
 import { Job } from 'bull';
 import { Redis } from 'ioredis';
-import { RunTestType } from '../../common/types/runTest.type';
+import { RunTestDto } from '@app/shared';
 
 
 @Injectable()
 export class TestProcessorService {
 
   async runBatchTest(
-    data: RunTestType,
+    data: RunTestDto,
     job: Job,
     redisClient: Redis,
   ) {
-    const { url, requests, concurrency, method = 'GET' } = data;
+    const { url, requests, concurrency, method = 'GET', testType } = data;
     let success = 0;
     let failed = 0;
     const latencies: number[] = [];
@@ -53,6 +53,11 @@ export class TestProcessorService {
     const avgLatency = latencies.reduce((sum, l) => sum + l, 0) / latencies.length || 0;
 
     return {
+      url,
+      requests,
+      concurrency,
+      method,
+      testType,
       totalRequests: requestsMade,
       success,
       failed,
@@ -63,11 +68,11 @@ export class TestProcessorService {
   }
 
   async runSustainedTest(
-    data: RunTestType,
+    data: RunTestDto,
     job: Job,
     redisClient: Redis,
   ) {
-    const { url, requests, concurrency, method = 'GET' } = data;
+    const { url, requests, concurrency, method = 'GET', testType } = data;
     let success = 0;
     let failed = 0;
     const latencies: number[] = [];
@@ -87,7 +92,7 @@ export class TestProcessorService {
         const end = performance.now();
         latencies.push(end - start);
 
-        if (requestsMade % 10 === 0 || requestsMade === requests) {
+        if (requestsMade % 2 === 0 || requestsMade === requests) {
           const progress = { requestsMade, success, failed, totalRequests: requests };
           await redisClient.publish(progressChannel, JSON.stringify(progress));
         }
@@ -123,6 +128,11 @@ export class TestProcessorService {
     const avgLatency = latencies.reduce((sum, l) => sum + l, 0) / latencies.length || 0;
 
     return {
+      url,
+      requests,
+      concurrency,
+      method,
+      testType,
       totalRequests: requests,
       success,
       failed,

@@ -21,6 +21,8 @@ const pkg = {
     "@nestjs/core": "^11.0.1",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/platform-socket.io": "^11.1.5",
+    "@nestjs/websockets": "^11.1.5",
     "axios": "^1.11.0",
     "bull": "^4.16.5",
     "chalk": "^5.4.1",
@@ -29,7 +31,8 @@ const pkg = {
     "p-queue": "^8.1.0",
     "performance-now": "^2.1.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "socket.io": "^4.8.1"
   }
 };
 

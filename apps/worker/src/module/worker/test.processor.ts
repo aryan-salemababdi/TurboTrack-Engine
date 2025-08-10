@@ -32,6 +32,8 @@ export class TestProcessor {
     }
 
     console.log(`Job ${job.id} completed.`);
+
+    console.log('Redis client connected to:', this.redisClient.options.host, this.redisClient.options.port);
     
     const resultChannel = `test_result:${job.id}`;
     await this.redisClient.publish(resultChannel, JSON.stringify(result));
