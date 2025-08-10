@@ -24,7 +24,9 @@ describe('TestService', () => {
       method: 'GET',
     };
 
-    const result = await service.runBatchTest(input);
+    const mockJob = { id: 'test-job-id' } as any;
+    const mockRedisClient = { publish: jest.fn().mockResolvedValue(1) } as any;
+    const result = await service.runBatchTest(input, mockJob, mockRedisClient);
 
     expect(fetch).toHaveBeenCalledTimes(10);
     expect(result.totalRequests).toBe(10);
@@ -53,7 +55,9 @@ describe('TestService', () => {
       method: 'GET',
     };
 
-    const result = await service.runBatchTest(input);
+    const mockJob = { id: 'test-job-id' } as any;
+    const mockRedisClient = { publish: jest.fn().mockResolvedValue(1) } as any;
+    const result = await service.runBatchTest(input, mockJob, mockRedisClient);
 
     expect(result.success).toBe(5);
     expect(result.failed).toBe(5);
@@ -68,7 +72,9 @@ describe('TestService', () => {
       method: 'GET',
     };
 
-    const result = await service.runBatchTest(input);
+    const mockJob = { id: 'test-job-id' } as any;
+    const mockRedisClient = { publish: jest.fn().mockResolvedValue(1) } as any;
+    const result = await service.runBatchTest(input, mockJob, mockRedisClient);
 
     expect(result.success).toBe(0);
     expect(result.failed).toBe(5);
