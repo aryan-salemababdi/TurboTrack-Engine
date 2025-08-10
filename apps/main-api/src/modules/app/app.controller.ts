@@ -37,7 +37,7 @@ export class AppController {
     }
     
     console.log(`Received result for job ${jobId} from n8n:`, resultData);
-    this.eventsGateway.sendFinalResult(jobId, resultData);
+    this.eventsGateway.sendFinalResult(jobId, resultData); 
 
     return { status: 'ok' };
   }
